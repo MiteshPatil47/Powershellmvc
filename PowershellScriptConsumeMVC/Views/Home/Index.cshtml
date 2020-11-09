@@ -1,0 +1,102 @@
+﻿@model PowershellScriptConsumeMVC.Models.MsgQueModels
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@*@Html.DropDownListFor(m => m.msgQuueName, new List<SelectListItem>
+ {
+     new SelectListItem {Value = "IRE", Text="Ireland" },
+     new SelectListItem {Value = "ITY", Text = "Italy"},
+     new SelectListItem {Value = "JPN", Text = "Japan" },
+     new SelectListItem {Value = "NZ", Text = "New Zealand" },
+
+  },
+    new { @id = "CountryList", @class = "form-control" })*@
+<br />
+<br />
+@Html.DropDownListFor(m=>m.msgQuueName,Model.MsgQueList, new {@clas="form-control" })
+<br />
+<hr />
+<div id="mypartial"> </div>
+<div>
+    <table class="table table-responsive table-bordered" >
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>ServerName</td>
+                <td>QueueName</td>
+                <td>MessageCount</td>
+                <td>CreationTime</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody >
+            @foreach( var item in Model.msgList)
+            {
+                <tr class="row">
+                    <td>
+                        @item.ServerName
+                    </td>
+                    <td>
+                        @item.QueueName
+                    </td>
+                    <td>
+                        @item.MessageCount
+                    </td>
+                    <td>
+                        @item.CreationTime
+                    </td>
+                    <td>
+                        <input type="button" class="btn btn-success btnsub" value="submit" />
+                    </td>
+                </tr>
+            }
+</tbody>
+        </table>
+    </div>
+
+<br />
+<div>
+    <table class="table table-responsive table-bordered">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>ServerName</td>
+                <td>QueueName</td>
+                <td>MessageCount</td>
+                <td>CreationTime</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.msgBodyList)
+            {
+                <tr class="row">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LookupId, new { @class = "form-control" })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lable, new { @class = "form-control" })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id, new { @class = "form-control" })
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(modelItem => item.MessageBody, new { @class = "form-control" })
+                    </td>
+                    <td>
+                        <input type="button" class="btn btn-success btnsub" value="submit" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+    @*<script>
+        $(document).ready(function () {
+           var route = '@Url.Action("PartialView", "Home")';
+           route = encodeURI(route);
+           $('#mypartial').load(route);
+        });
+           </script>*@

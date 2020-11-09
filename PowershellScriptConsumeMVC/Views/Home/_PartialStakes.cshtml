@@ -1,0 +1,38 @@
+﻿@model IEnumerable<PowershellScriptConsumeMVC.Models.MsgModel>
+
+<div>
+    <table class="table table-responsive table-bordered">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>ServerName</td>
+                <td>QueueName</td>
+                <td>MessageCount</td>
+                <td>CreationTime</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="row">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LookupId, new { @class="form-control"}) 
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lable, new { @class = "form-control" }) 
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id, new { @class = "form-control" })    
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(modelItem => item.MessageBody, new { @class = "form-control" })  
+                    </td>
+                    <td>
+                        <input type="button" class="btn btn-success btnsub" value="submit" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
