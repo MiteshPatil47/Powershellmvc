@@ -81,7 +81,6 @@ C:\Users\Mit\source\repos\PowershellScriptConsumeMVC\PowershellScriptConsumeMVC\
 C:\Users\Mit\source\repos\PowershellScriptConsumeMVC\PowershellScriptConsumeMVC\bin\System.Web.Http.xml
 C:\Users\Mit\source\repos\PowershellScriptConsumeMVC\PowershellScriptConsumeMVC\bin\System.Web.Http.WebHost.xml
 C:\Users\Mit\source\repos\PowershellScriptConsumeMVC\PowershellScriptConsumeMVC\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\Mit\source\repos\PowershellScriptConsumeMVC\PowershellScriptConsumeMVC\obj\Debug\PowershellScriptConsumeMVC.csprojAssemblyReference.cache
 C:\Users\Mit\source\repos\PowershellScriptConsumeMVC\PowershellScriptConsumeMVC\obj\Debug\PowershellScriptConsumeMVC.csproj.CoreCompileInputs.cache
 C:\Users\Mit\source\repos\PowershellScriptConsumeMVC\PowershellScriptConsumeMVC\obj\Debug\PowershellScriptConsumeMVC.csproj.CopyComplete
 C:\Users\Mit\source\repos\PowershellScriptConsumeMVC\PowershellScriptConsumeMVC\obj\Debug\PowershellScriptConsumeMVC.dll

@@ -5,34 +5,71 @@
         <thead>
             <tr>
                 <td>#</td>
-                <td>ServerName</td>
-                <td>QueueName</td>
-                <td>MessageCount</td>
-                <td>CreationTime</td>
+                <td>LookupId</td>
+                <td>Lable</td>
+                <td>Id</td>
+                <td>Send Time</td>
+                <td>MessageBody</td>
                 <td>Action</td>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr class="row">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LookupId, new { @class="form-control"}) 
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Lable, new { @class = "form-control" }) 
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Id, new { @class = "form-control" })    
-                    </td>
-                    <td>
-                        @Html.TextAreaFor(modelItem => item.MessageBody, new { @class = "form-control" })  
-                    </td>
-                    <td>
-                        <input type="button" class="btn btn-success btnsub" value="submit" />
-                    </td>
-                </tr>
+            <tr class="row">
+                <td>
+                    @Html.DisplayFor(modelItem => item.LookupId, new { @class = "form-control" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Lable, new { @class = "form-control" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id, new { @class = "form-control" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SendTime, new { @class = "form-control" })
+                </td>
+                <td>
+                    @Html.TextAreaFor(modelItem => item.MessageBody, new { @class = "form-control" ,@id="txtMsgBody"+ item.LookupId })
+                </td>
+                <td>
+                    <input type="button" class="btn btn-success btnsub" id="btn_@item.LookupId" value="submit" />
+                </td>
+            </tr>
             }
         </tbody>
     </table>
 </div>
+
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $('.btnsub').click(function () {
+            console.log("Function onclick inside");
+            var get_id = $(this).find('.btnsub input').val();
+            var get_attrid = $(this).find('.btnsub input').attr('id');
+            var txtId = "txtMsgBody" + get_attrid;
+            console.log(get_id);
+            console.log(get_attrid);
+            console.log(txtId);
+            localStorage.setItem("ContainerID", get_attrid);
+            localStorage.setItem("ElementID", get_id);
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: "/Home/JqAJAX",
+            //    data: {
+            //        parentID: divparent,
+            //        ID: get_id
+            //    },
+            //    //  dataType: "json"  ,
+            //    success: function (data) {
+            //        alert(data.msg);
+            //    },
+            //    error: function () {
+            //        alert("Error occured!!")
+            //    }
+            //});
+        });
+    }
+</script>*@

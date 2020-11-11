@@ -42,5 +42,6 @@ namespace PowershellScriptConsumeMVC.Models
         public string MessageBody { get; set; }
         public string Destination { get; set; }
         public string Response { get; set; }
+        public string SendTime { get; set; }
     }
 }

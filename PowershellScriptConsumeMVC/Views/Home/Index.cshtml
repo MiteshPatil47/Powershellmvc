@@ -1,102 +1,102 @@
-﻿@model PowershellScriptConsumeMVC.Models.MsgQueModels
-@{
-    ViewBag.Title = "Home Page";
+﻿@{
+    ViewBag.Title = "Message Queue";
 }
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
 
-@*@Html.DropDownListFor(m => m.msgQuueName, new List<SelectListItem>
- {
-     new SelectListItem {Value = "IRE", Text="Ireland" },
-     new SelectListItem {Value = "ITY", Text = "Italy"},
-     new SelectListItem {Value = "JPN", Text = "Japan" },
-     new SelectListItem {Value = "NZ", Text = "New Zealand" },
 
-  },
-    new { @id = "CountryList", @class = "form-control" })*@
+@model PowershellScriptConsumeMVC.Models.MsgQueModels
 <br />
-<br />
-@Html.DropDownListFor(m=>m.msgQuueName,Model.MsgQueList, new {@clas="form-control" })
+@Html.DropDownListFor(m => m.msgQuueName, Model.MsgQueList, new { @id = "MsgQueueList", @clas = "form-control" })
 <br />
 <hr />
 <div id="mypartial"> </div>
-<div>
-    <table class="table table-responsive table-bordered" >
-        <thead>
-            <tr>
-                <td>#</td>
-                <td>ServerName</td>
-                <td>QueueName</td>
-                <td>MessageCount</td>
-                <td>CreationTime</td>
-                <td>Action</td>
-            </tr>
-        </thead>
-        <tbody >
-            @foreach( var item in Model.msgList)
-            {
-                <tr class="row">
-                    <td>
-                        @item.ServerName
-                    </td>
-                    <td>
-                        @item.QueueName
-                    </td>
-                    <td>
-                        @item.MessageCount
-                    </td>
-                    <td>
-                        @item.CreationTime
-                    </td>
-                    <td>
-                        <input type="button" class="btn btn-success btnsub" value="submit" />
-                    </td>
-                </tr>
-            }
-</tbody>
-        </table>
-    </div>
 
-<br />
-<div>
-    <table class="table table-responsive table-bordered">
-        <thead>
-            <tr>
-                <td>#</td>
-                <td>ServerName</td>
-                <td>QueueName</td>
-                <td>MessageCount</td>
-                <td>CreationTime</td>
-                <td>Action</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.msgBodyList)
-            {
-                <tr class="row">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LookupId, new { @class = "form-control" })
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Lable, new { @class = "form-control" })
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Id, new { @class = "form-control" })
-                    </td>
-                    <td>
-                        @Html.TextAreaFor(modelItem => item.MessageBody, new { @class = "form-control" })
-                    </td>
-                    <td>
-                        <input type="button" class="btn btn-success btnsub" value="submit" />
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
 
-    @*<script>
-        $(document).ready(function () {
-           var route = '@Url.Action("PartialView", "Home")';
-           route = encodeURI(route);
-           $('#mypartial').load(route);
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+    @*var route = '@Url.Action("PartialView", "Home")';
+    route = encodeURI(route);
+     $('#mypartial').load(route);*@
+
+
+    $('#MsgQueueList').on('change',(function () {
+    var msgQueue = $(this).val();
+    $.ajax({
+        url: '@Url.Action("PartialView", "Home")',
+        type: 'POST',
+        data: JSON.stringify({ queueName: msgQueue }),
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+           $("#mypartial").html(data);
+        }
+    });
+     }));
+        $(document).on("click", ".btnsub", function (e) {
+            /// Do your stuff
+
+         //   alert($(this).attr("id"));
+            var get_id = $(this).attr("id");
+            var id = get_id.replace("btn_", "");
+            var txtId = "#txtMsgBody" + id;
+            var textdata = $(txtId).val();
+            // console.log(get_id);
+            console.log(id);
+          //  console.log(txtId);
+            console.log(textdata);
+
+             $.ajax({
+                 
+                 url: '@Url.Action("MoveQueue", "Home")',
+                 type: "POST",
+               // url: "/Home/MoveQueue",
+                //data: {
+                //    LookupId: id,
+                //    message: textdata
+                //},
+                 data: JSON.stringify({ LookupId: id, message: textdata}),
+                 contentType: 'application/json; charset=utf-8' ,
+                success: function (data) {
+                    alert(data.result);
+                },
+                error: function () {
+                    alert("Error occured!!")
+                }
+            });
+
         });
-           </script>*@
+
+        //$('.btnsub').on('click',(function () {
+        //    console.log("Function onclick inside");
+        //    var get_id = $(this).find('input').val();
+        //    var get_attrid = $(this).find('.btnsub input').attr('id');
+        //    var txtId = "txtMsgBody" + get_attrid;
+        //    console.log(get_id);
+        //    console.log(get_attrid);
+        //    console.log(txtId);
+        //    localStorage.setItem("ContainerID", get_attrid);
+        //    localStorage.setItem("ElementID", get_id);
+
+        //    //$.ajax({
+        //    //    type: "POST",
+        //    //    url: "/Home/JqAJAX",
+        //    //    data: {
+        //    //        parentID: divparent,
+        //    //        ID: get_id
+        //    //    },
+        //    //    //  dataType: "json"  ,
+        //    //    success: function (data) {
+        //    //        alert(data.msg);
+        //    //    },
+        //    //    error: function () {
+        //    //        alert("Error occured!!")
+        //    //    }
+        //    //});
+        //}));
+ });
+
+</script>
