@@ -1,11 +1,10 @@
 [CmdletBinding()]
 param (
     [string] $Destination ,
+    [string] $Source,
     [long]$lookupId ,
     [string] $msgbody 
 )
-
-$Source = '.\Private$\test'
 
 $SourceQueue = new-object System.Messaging.MessageQueue $Source
 
@@ -23,7 +22,7 @@ $msgtosend = New-Object System.Messaging.Message
 $msgtosend.Priority = [System.Messaging.MessagePriority]::high
 $msgtosend.Label = $message.Label
 $msgtosend.Body = $msgbody
-$msgtosend.ResponseQueue = $queueName
+$msgtosend.ResponseQueue = $SourceQueue
 $result = $DestinationQueue.send($msgtosend)  
 }
 

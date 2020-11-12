@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Ajax.Utilities;
+using Newtonsoft.Json;
 using PowershellScriptConsumeMVC.Models;
 using System;
 using System.Collections;
@@ -24,6 +25,8 @@ namespace PowershellScriptConsumeMVC.Controllers
             MsgQueModels model = new MsgQueModels();
            List<MsgQueueModel> objList = new List<MsgQueueModel>();
             List<MsgModel> rsltList = new List<MsgModel>();
+
+           
             objList = GetmsgQueueList();
               
             model.msgList = objList;
@@ -44,11 +47,11 @@ namespace PowershellScriptConsumeMVC.Controllers
   
             if (queueName == null)
             {
-                model.msgQuueName = "private$\\myqueue";
+                model.msgQuueName = ".\\private$\\myqueue";
             }
             else
             {
-                model.msgQuueName = queueName;
+                model.msgQuueName = ".\\" + queueName;
             }
 
             List<MsgQueueModel> objList = new List<MsgQueueModel>();
@@ -60,8 +63,10 @@ namespace PowershellScriptConsumeMVC.Controllers
                    .Distinct()
                    .ToList();
             model.MsgQueList = new SelectList(distinctCategories, "QueueName", "QueueName");
-       
-            rstList = GetAllMessages(model.msgQuueName);
+
+
+            rstList = GetAllMessagesBYQueueName(model.msgQuueName);
+         //     rstList = GetAllMessages(model.msgQuueName);
 
             model.msgBodyList = rstList;
             //return PartialView("~/Views/Home/_PartialStakes.cshtml", stakesDetails.StacksList(clsStakes.Country));
@@ -88,11 +93,12 @@ namespace PowershellScriptConsumeMVC.Controllers
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult MoveQueue(string LookupId, string message)
+        public ActionResult MoveQueue(string LookupId, string message,string msgQueueName, string destination)
         {
             bool result = false;
             long lookid = Convert.ToInt64(LookupId);
-            result = MoveQueueMsg(message, lookid, "private$\\myqueue");
+            var msg = GetMessageBody(message);
+            result = MoveQueueMsg(msg, lookid, msgQueueName, destination);
             return Json (JsonConvert.SerializeObject(result), JsonRequestBehavior.AllowGet);
         }
 
@@ -146,7 +152,7 @@ namespace PowershellScriptConsumeMVC.Controllers
                  // string path = @"D:\PowershelScript\GetMessagedInTableFormat.ps1";
                 string path = Server.MapPath(@"~\Content\PSScripts\GetMessagedInTableFormat.ps1");
                 if (!string.IsNullOrEmpty(path))
-                    PowerShellInst.AddScript(System.IO.File.ReadAllText(path)).AddParameter("queueName", ".\\"+ queueName);
+                    PowerShellInst.AddScript(System.IO.File.ReadAllText(path)).AddParameter("queueName", queueName);
 
                 Collection<PSObject> PSOutput = PowerShellInst.Invoke();
                 foreach (PSObject obj in PSOutput)
@@ -176,7 +182,7 @@ namespace PowershellScriptConsumeMVC.Controllers
         /// <param name="lookupid"></param>
         /// <param name="queueName"></param>
         /// <returns></returns>
-        private bool MoveQueueMsg(string msg,long lookupid, string queueName)
+        private bool MoveQueueMsg(string msg,long lookupid, string queueName, string destination)
         {
             bool strResult = false;
             Dictionary<string, string> paramsdict = new Dictionary<string, string>();
@@ -188,14 +194,9 @@ namespace PowershellScriptConsumeMVC.Controllers
                 //Execute PS1(PowerShell script) file
                 using (PowerShell PowerShellInst = PowerShell.Create())
                 {
-                    // string path = @"D:\PowershelScript\GetMessagedInTableFormat.ps1";
-                   
-                    //if (!string.IsNullOrEmpty(path))
-                    //    PowerShellInst.AddScript(System.IO.File.ReadAllText(path)).AddParameter("Destination", ".\\" + queueName);
-
-                   // string paramsmeteres = "Destination," + ".\\" + queueName + ",lookupId," + lookupid + ",msgbody," + msg;
-                    
+                   // parameter dictionary with values
                     paramsdict.Add("Destination", ".\\" + queueName);
+                    paramsdict.Add("Source", ".\\" + destination);
                     paramsdict.Add("lookupId", lookupid.ToString());
                     paramsdict.Add("msgbody", msg);
 
@@ -206,25 +207,7 @@ namespace PowershellScriptConsumeMVC.Controllers
                         stringBuilder.AppendLine(obj.ToString());
                     }
 
-                    foreach (PSObject obj in PSOutput)
-                    {
-                        if (obj != null)
-                        {
-                            MsgModel model = new MsgModel();
-                            model.Lable = obj.Properties["GAC"].Value.ToString();
-                            model.Id = obj.Properties["Id"].Value.ToString();
-                            model.LookupId = obj.Properties["LookupId"].Value.ToString();
-                            model.SendTime = obj.Properties["SendTime"].Value.ToString();
-                            model.MessageBody = obj.Properties["MsgBody"].Value.ToString();
-
-                        }
-                    }
-
                 }
-
-          
-              
-               
                 strResult = true;
             }
             catch(Exception ex)
@@ -233,7 +216,52 @@ namespace PowershellScriptConsumeMVC.Controllers
             }
             return strResult;
         }
+        /// <summary>
+        /// Get all Mesages for Message Queue using c# 
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
+        private List<MsgModel>  GetAllMessagesBYQueueName(string queueName)
+        {
+            List<MsgModel> rstList = new List<MsgModel>();
+            // Connect to a queue on the local computer.
+            MessageQueue queue = new MessageQueue(queueName);
 
+            // Set the queue to read the priority. By default, it
+            // is not read.
+            queue.MessageReadPropertyFilter.Priority = true;
+
+           // Populate an array with copies of all the messages in the queue.
+            Message[] msgs = queue.GetAllMessages();
+         
+            // Loop through the messages.
+            foreach (Message msg in msgs)
+            {
+                MsgModel model = new MsgModel();
+              //  StringBuilder ms = new StringBuilder();
+                model.Lable = msg.Label;
+                model.LookupId = msg.LookupId.ToString();
+                msg.Formatter = new XmlMessageFormatter(new String[] { "System.String,mscorlib" });
+                StreamReader sr = new StreamReader(msg.BodyStream);
+                var msgBody = sr.ReadToEnd();
+                model.MessageBody = msgBody;
+               //model.SendTime = Convert.ToString( msg.ArrivedTime);
+                model.Id = msg.Id;
+                if(msg.ResponseQueue != null)
+                model.Response = msg.ResponseQueue.QueueName;
+                rstList.Add(model);
+            }
+            return rstList;
+        }
+
+        private string GetMessageBody(string xmlString)
+        {
+            string strResult = string.Empty;
+            xmlString = xmlString.Replace("<?xml version=\"1.0\"?>", "");
+            xmlString = xmlString.Replace("<string>","").Replace("</string>","").Replace("\n","");
+            strResult = xmlString;
+            return strResult;
+        }
         #endregion
 
         #region "Power sehll script calling "

@@ -17,6 +17,7 @@
             @foreach (var item in Model)
             {
             <tr class="row">
+                @Html.HiddenFor(modelItem => item.Response, new { @id = "hdnRsp" + item.LookupId })
                 <td>
                     @Html.DisplayFor(modelItem => item.LookupId, new { @class = "form-control" })
                 </td>
@@ -40,36 +41,3 @@
         </tbody>
     </table>
 </div>
-
-
-@*<script type="text/javascript">
-    $(document).ready(function () {
-        $('.btnsub').click(function () {
-            console.log("Function onclick inside");
-            var get_id = $(this).find('.btnsub input').val();
-            var get_attrid = $(this).find('.btnsub input').attr('id');
-            var txtId = "txtMsgBody" + get_attrid;
-            console.log(get_id);
-            console.log(get_attrid);
-            console.log(txtId);
-            localStorage.setItem("ContainerID", get_attrid);
-            localStorage.setItem("ElementID", get_id);
-
-            //$.ajax({
-            //    type: "POST",
-            //    url: "/Home/JqAJAX",
-            //    data: {
-            //        parentID: divparent,
-            //        ID: get_id
-            //    },
-            //    //  dataType: "json"  ,
-            //    success: function (data) {
-            //        alert(data.msg);
-            //    },
-            //    error: function () {
-            //        alert("Error occured!!")
-            //    }
-            //});
-        });
-    }
-</script>*@

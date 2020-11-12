@@ -44,9 +44,12 @@
             var id = get_id.replace("btn_", "");
             var txtId = "#txtMsgBody" + id;
             var textdata = $(txtId).val();
-            // console.log(get_id);
+            var respons = "#hdnRsp" + id;
+            var respQueue = $(respons).val();
+            var sourceque = $('#MsgQueueList').val();
+            console.log(sourceque);
             console.log(id);
-          //  console.log(txtId);
+            console.log(respQueue);
             console.log(textdata);
 
              $.ajax({
@@ -58,10 +61,10 @@
                 //    LookupId: id,
                 //    message: textdata
                 //},
-                 data: JSON.stringify({ LookupId: id, message: textdata}),
+                 data: JSON.stringify({ LookupId: id, message: textdata, msgQueueName: respQueue, destination:sourceque}),
                  contentType: 'application/json; charset=utf-8' ,
                 success: function (data) {
-                    alert(data.result);
+                    alert(data);
                 },
                 error: function () {
                     alert("Error occured!!")
