@@ -8,7 +8,7 @@
                 <td>LookupId</td>
                 <td>Lable</td>
                 <td>Id</td>
-                <td>Send Time</td>
+                <td>Response queue</td>
                 <td>MessageBody</td>
                 <td>Action</td>
             </tr>
@@ -28,7 +28,7 @@
                     @Html.DisplayFor(modelItem => item.Id, new { @class = "form-control" })
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SendTime, new { @class = "form-control" })
+                    @Html.DisplayFor(modelItem => item.Response, new { @class = "form-control" })
                 </td>
                 <td>
                     @Html.TextAreaFor(modelItem => item.MessageBody, new { @class = "form-control" ,@id="txtMsgBody"+ item.LookupId })

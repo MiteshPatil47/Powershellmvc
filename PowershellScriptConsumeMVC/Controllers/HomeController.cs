@@ -19,15 +19,18 @@ namespace PowershellScriptConsumeMVC.Controllers
 {
     public class HomeController : Controller
     {
-       
+        public static Int32 j = 0;
+        public System.Messaging.MessageQueue mq;
+        [System.Messaging.MessagingDescription("MsgResponseQueue")]
+        public System.Messaging.MessageQueue ResponseQueue { get; set; }
         public ActionResult Index()
         {
             MsgQueModels model = new MsgQueModels();
            List<MsgQueueModel> objList = new List<MsgQueueModel>();
             List<MsgModel> rsltList = new List<MsgModel>();
 
-           
-            objList = GetmsgQueueList();
+          //  SendMessage("test", "288230376151732226", @".\Private$\myqueue", @".\Private$\test");
+             objList = GetmsgQueueList();
               
             model.msgList = objList;
             var distinctCategories = objList
@@ -97,8 +100,11 @@ namespace PowershellScriptConsumeMVC.Controllers
         {
             bool result = false;
             long lookid = Convert.ToInt64(LookupId);
-            var msg = GetMessageBody(message);
-            result = MoveQueueMsg(msg, lookid, msgQueueName, destination);
+            //var msg = GetMessageBody(message);
+             // C# call 
+            result =SendMessage(message, LookupId, ".\\"+destination, ".\\" + msgQueueName);
+             //Power shell script call 
+            // result = MoveQueueMsg(msg, lookid, msgQueueName, destination);
             return Json (JsonConvert.SerializeObject(result), JsonRequestBehavior.AllowGet);
         }
 
@@ -253,7 +259,6 @@ namespace PowershellScriptConsumeMVC.Controllers
             }
             return rstList;
         }
-
         private string GetMessageBody(string xmlString)
         {
             string strResult = string.Empty;
@@ -262,6 +267,45 @@ namespace PowershellScriptConsumeMVC.Controllers
             strResult = xmlString;
             return strResult;
         }
+
+        /// <summary>
+        /// Move message from recipent queue to response queue 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="lid"></param>
+        /// <param name="recipentQueue"></param>
+        /// <param name="responseQueue"></param>
+        /// <returns></returns>
+        private bool SendMessage(string msg, string lid, string recipentQueue, string responseQueue)
+        {
+            bool bResult = false;
+            long lookid = Convert.ToInt64(lid);
+            try
+            {
+                MessageQueue queue = new MessageQueue(responseQueue);
+                // Connect to a queue on the local computer.
+                MessageQueue queue1 = new MessageQueue(recipentQueue);
+
+                // Populate an array with copies of all the messages in the queue.
+                Message msgs = queue1.PeekByLookupId(lookid);
+                msgs.Body = msg;
+              //  mm.Label = "Msg" + j.ToString();
+              //to add response queue name 
+               // ResponseQueue = new System.Messaging.MessageQueue(recipentQueue);
+               // msgs.ResponseQueue = ResponseQueue;
+                j++;
+                //queue.Path = responseQueue;
+                queue.Send(msgs);
+                queue1.ReceiveByLookupId(msgs.LookupId);
+                bResult = true;
+            }
+            catch (MessageQueueException ex)
+            {
+                bResult = false;
+            }
+            return bResult;
+        }
+
         #endregion
 
         #region "Power sehll script calling "
