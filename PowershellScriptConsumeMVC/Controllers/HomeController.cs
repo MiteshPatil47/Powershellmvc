@@ -282,20 +282,25 @@ namespace PowershellScriptConsumeMVC.Controllers
             long lookid = Convert.ToInt64(lid);
             try
             {
-                MessageQueue queue = new MessageQueue(responseQueue);
+                MessageQueue queue = new MessageQueue(responseQueue, QueueAccessMode.SendAndReceive);
+                //MessageQueue queue = new MessageQueue(responseQueue);
                 // Connect to a queue on the local computer.
                 MessageQueue queue1 = new MessageQueue(recipentQueue);
 
                 // Populate an array with copies of all the messages in the queue.
                 Message msgs = queue1.PeekByLookupId(lookid);
                 msgs.Body = msg;
-              //  mm.Label = "Msg" + j.ToString();
-              //to add response queue name 
-               // ResponseQueue = new System.Messaging.MessageQueue(recipentQueue);
-               // msgs.ResponseQueue = ResponseQueue;
+                //  mm.Label = "Msg" + j.ToString();
+                //to add response queue name 
+                ResponseQueue = new System.Messaging.MessageQueue(recipentQueue);
+                msgs.ResponseQueue = ResponseQueue;
                 j++;
                 //queue.Path = responseQueue;
+                
+                //queue.Send(msgs);
+                
                 queue.Send(msgs);
+                queue.Close();
                 queue1.ReceiveByLookupId(msgs.LookupId);
                 bResult = true;
             }
