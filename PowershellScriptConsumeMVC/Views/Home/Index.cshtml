@@ -53,7 +53,7 @@
             console.log(textdata);
 
              $.ajax({
-                 
+
                  url: '@Url.Action("MoveQueue", "Home")',
                  type: "POST",
                // url: "/Home/MoveQueue",
@@ -64,6 +64,8 @@
                  data: JSON.stringify({ LookupId: id, message: textdata, msgQueueName: respQueue, destination:sourceque}),
                  contentType: 'application/json; charset=utf-8' ,
                 success: function (data) {
+                    
+                    refreshGrid(sourceque)
                     alert(data);
                 },
                 error: function () {
@@ -73,6 +75,17 @@
 
         });
 
+        function refreshGrid(msgQueue) {
+                $.ajax({
+        url: '@Url.Action("PartialView", "Home")',
+        type: 'POST',
+        data: JSON.stringify({ queueName: msgQueue }),
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+           $("#mypartial").html(data);
+        }
+    });
+        }
         //$('.btnsub').on('click',(function () {
         //    console.log("Function onclick inside");
         //    var get_id = $(this).find('input').val();
