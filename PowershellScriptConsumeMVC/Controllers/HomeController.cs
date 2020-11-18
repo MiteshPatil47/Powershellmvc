@@ -28,7 +28,7 @@ namespace PowershellScriptConsumeMVC.Controllers
             MsgQueModels model = new MsgQueModels();
            List<MsgQueueModel> objList = new List<MsgQueueModel>();
             List<MsgModel> rsltList = new List<MsgModel>();
-
+            CreateMsg();
           //  SendMessage("test", "288230376151732226", @".\Private$\myqueue", @".\Private$\test");
              objList = GetmsgQueueList();
               
@@ -44,6 +44,20 @@ namespace PowershellScriptConsumeMVC.Controllers
             
         }
 
+        private void CreateMsg()
+        {
+            MessageQueue qu1 = new MessageQueue(".\\private$\\test");
+
+            Message msg = new Message();
+
+            msg.Body = "test message";
+            msg.Label = "msg" + j.ToString();
+            ResponseQueue = new MessageQueue(".\\private$\\myqueue");
+            msg.ResponseQueue = ResponseQueue;
+            j++;
+
+            qu1.Send(msg);
+        }
         // Display Partial View
         public ActionResult PartialView(string queueName, MsgQueModels model)
         {

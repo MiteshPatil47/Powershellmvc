@@ -86,33 +86,29 @@
         }
     });
         }
-        //$('.btnsub').on('click',(function () {
-        //    console.log("Function onclick inside");
-        //    var get_id = $(this).find('input').val();
-        //    var get_attrid = $(this).find('.btnsub input').attr('id');
-        //    var txtId = "txtMsgBody" + get_attrid;
-        //    console.log(get_id);
-        //    console.log(get_attrid);
-        //    console.log(txtId);
-        //    localStorage.setItem("ContainerID", get_attrid);
-        //    localStorage.setItem("ElementID", get_id);
 
-        //    //$.ajax({
-        //    //    type: "POST",
-        //    //    url: "/Home/JqAJAX",
-        //    //    data: {
-        //    //        parentID: divparent,
-        //    //        ID: get_id
-        //    //    },
-        //    //    //  dataType: "json"  ,
-        //    //    success: function (data) {
-        //    //        alert(data.msg);
-        //    //    },
-        //    //    error: function () {
-        //    //        alert("Error occured!!")
-        //    //    }
-        //    //});
-        //}));
+        $('#messageModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('id') // Extract info from data-* attributes
+            console.log(recipient);
+            var txtId = "#txtMsgBody" + recipient;
+            var textdata = $(txtId).val();
+            var respons = "#hdnRsp" + recipient;
+            var respQueue = $(respons).val();
+            var sourceque = $('#MsgQueueList').val();
+
+
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            modal.find('.modal-title').text('New message to ' + recipient)
+            modal.find('.modal-body textarea').text(textdata);
+            modal.find('.modal-body input').val(recipient)
+            modal.find('.modal-body label lblresponsequeue ').text(respons);
+            modal.find('.modal-body label lblRecipent ').text(sourceque);
+        });
+
+
  });
 
 </script>
